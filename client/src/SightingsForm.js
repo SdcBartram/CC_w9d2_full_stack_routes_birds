@@ -16,10 +16,11 @@ const SightingsForm = ({addSighting}) => {
     }
 
     const onSubmit = (e) =>{
+        console.log("Form submitted!")
         e.preventDefault();
+        console.log("after default")
         postSighting(formData).then((data)=>{
             addSighting(data);
-            console.log(data)
         })
         // Reset the form input values
         setFormData({

@@ -20,6 +20,8 @@ function App() {
     setBirdSightings([...birdSightings, sighting]);
   }
 
+
+
   const removeSighting = (id) => {
     const sightingsToKeep = birdSightings.filter(sighting => sighting._id !== id)
     setBirdSightings(sightingsToKeep);

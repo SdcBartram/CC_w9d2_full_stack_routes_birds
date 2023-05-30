@@ -1,46 +1,61 @@
 const express = require('express');
-const ObjectID = require('mongodb').ObjectID;
+const ObjectId = require('mongodb').ObjectId;
 
 const createRouter = function (collection) {
 
   const router = express.Router();
 
-  router.get('/', (req, res) => {
+  router.get('/', (request, response) => {
     collection
       .find()
       .toArray()
-      .then((docs) => res.json(docs))
+      .then((docs) => response.json(docs))
       .catch((err) => {
         console.error(err);
-        res.status(500);
-        res.json({ status: 500, error: err });
+        response.status(500);
+        response.json({ status: 500, error: err });
       });
   });
 
-  router.get('/:id', (req, res) => {
-    const id = req.params.id;
+  //Version 5 of mongodb, the ObjectId constructor needs to be called with the 'new' keyword!!!
+  router.get('/:id', (request, response) => {
+    const id = request.params.id;
     collection
-      .findOne({ _id: ObjectID(id) })
-      .then((doc) => res.json(doc))
+      .findOne({ _id: new ObjectId(id) })
+      .then((doc) => response.json(doc))
       .catch((err) => {
         console.error(err);
-        res.status(500);
-        res.json({ status: 500, error: err });
+        response.status(500);
+        response.json({ status: 500, error: err });
       });
   });
 
-  router.post('/', (req, res) => {
-    const newSighting = req.body
+  router.post('/', (request, response) => {
+    const newSighting = request.body
     collection.insertOne(newSighting)
     .then((result) => {
-      const myObjectId = result.insertedId.toString()
-      res.json(myObjectId)
+      const myObjectId = result.insertedId
+      collection
+      .findOne({ _id: myObjectId })
+      .then((doc) => response.json(doc))
     })
     .catch((err) => {
       console.error(err);
-      res.status(500);
-      res.json({ status: 500, error: err });
+      response.status(500);
+      response.json({ status: 500, error: err });
     });
+  })
+
+  //Version 5 of mongodb, the ObjectId constructor needs to be called with the 'new' keyword!!!
+  router.delete('/:id', (request, response) => {
+    const id = request.params.id
+    collection.deleteOne({ _id: new ObjectId(id) })
+    .then(result => response.json(result))
+    .catch((err) => {
+      console.err(err)
+      response.status(500)
+      response.json({ status: 500, error: err })
+    })
   })
 
   return router;

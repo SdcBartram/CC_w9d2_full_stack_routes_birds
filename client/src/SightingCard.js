@@ -2,7 +2,7 @@ import { deleteSighting } from "./SightingService"
 
 const SightingCard = ({sighting, removeSighting}) => {
 
-    console.log(sighting);
+    // console.log("card",sighting);
     const handleDelete = () => {
         deleteSighting(sighting._id).then(()=>{
             removeSighting(sighting._id);
